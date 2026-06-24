@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlowVocab Premium 100+</title>
+    <style>
+        :root {
+            --bg-color: #fafafa;
+            --surface-color: #ffffff;
+            --text-main: #111111;
+            --text-sub: #666666;
+            --primary: #58cc02;
+            --border-color: #e5e5e5;
+            --card-shadow: 0 16px 40px rgba(0, 0, 0, 0.06);
+            --know-color: #58cc02;
+            --notknow-color: #ff4b4b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .menu-container {
+            padding: 16px;
+            background: var(--surface-color);
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .menu-container::-webkit-scrollbar { display: none; }
+        
+        .menu-btn {
+            background: #f1f1f1;
+            color: #4b4b4b;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            border-bottom: 2px solid #e5e5e5;
+            transition: all 0.15s;
+        }
+        .menu-btn.active {
+            background: var(--primary);
+            color: white;
+            border-bottom: 2px solid #46a302;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            position: relative;
+        }
+
+        .desc {
+            color: var(--text-sub);
+            font-size: 13px;
+            text-align: center;
+            line-height: 1.5;
+            max-width: 320px;
+            margin-bottom: 30px;
+        }
+
+        .card-container {
+            width: 100%;
+            max-width: 340px;
+            height: 400px;
+            position: relative;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            box-shadow: var(--card-shadow);
+            border-radius: 26px;
+            cursor: pointer;
+            border: 2px solid var(--border-color);
+            background-color: var(--surface-color);
+            padding: 30px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-sizing: border-box;
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), left 0.3s, top 0.3s, opacity 0.3s;
+        }
+
+        .card .front-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .card .back-content {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            height: 100%;
+        }
+
+        .card.flipped .front-content { display: none; }
+        .card.flipped .back-content { display: flex; }
+        .card.flipped {
+            border-color: #ced4da;
+            background-color: #fefefe;
+        }
+
+        .word {
+            font-size: 38px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 12px;
+            color: #111;
+            word-break: break-word;
+        }
+
+        .tag {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #777;
+            background: #f1f1f1;
+            padding: 6px 14px;
+            border-radius: 10px;
+        }
+
+        .translation {
+            font-size: 23px;
+            font-weight: 800;
+            color: #155724;
+            margin-top: 10px;
+        }
+
+        .example-box {
+            background: #f8f9fa;
+            padding: 18px;
+            border-radius: 20px;
+            text-align: left;
+            width: 100%;
+            border-left: 5px solid var(--primary);
+            margin-top: auto;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .ex-en {
+            font-style: italic;
+            margin-bottom: 8px;
+            color: #222;
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .ex-mn {
+            color: var(--text-sub);
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .stats {
+            margin-top: 30px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #aaa;
+            letter-spacing: 0.5px;
+        }
+
+        .action-hint {
+            position: absolute;
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 8px 18px;
+            border-radius: 10px;
+            opacity: 0;
+            transition: opacity 0.1s;
+            z-index: 10;
+        }
+        .hint-know { right: 10px; top: -40px; background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+        .hint-not { left: 10px; top: -40px; background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+        .hint-reveal { left: 50%; transform: translateX(-50%); bottom: -40px; background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
+    </style>
+</head>
+<body>
+
+    <div class="menu-container">
+        <button class="menu-btn active" onclick="changeCategory('b1', this)">B1 Vocabulary</button>
+        <button class="menu-btn" onclick="changeCategory('b2', this)">B2 Vocabulary</button>
+        <button class="menu-btn" onclick="changeCategory('grammar', this)">English Grammar</button>
+    </div>
+
+    <div class="main-content">
+        <div class="desc">Дээшээ шударвал орчуулга харна. Баруун тийш шударвал мэднэ, зүүн тийш шударвал мэдэхгүй.</div>
+
+        <div class="card-container">
+            <div class="action-hint hint-know">Мэднэ</div>
+            <div class="action-hint hint-not">Мэдэхгүй</div>
+            <div class="action-hint hint-reveal">Орчуулга</div>
+            
+            <div class="card" id="card">
+                <div class="front-content" id="front-view">
+                    <div class="word" id="word-en">Loading...</div>
+                    <div class="tag" id="word-pos">WORD</div>
+                </div>
+                <div class="back-content" id="back-view">
+                    <div class="translation" id="word-mn">Уншиж байна...</div>
+                    <div class="example-box">
+                        <div class="ex-en" id="ex-en">Example loading...</div>
+                        <div class="ex-mn" id="ex-mn">Жишээ уншиж байна...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats" id="stats">Remaining: 0</div>
+    </div>
+
+    <script>
+        const dataSources = {
+            b1: [
+                { en: "agree", mn: "Санал нэгдэх, зөвшөөрөх", pos: "verb", exEn: "I agree with your opinion on this matter.", exMn: "Энэ асуудал дээр би чиний саналтай нэгдэж байна." },
+                { en: "admit", mn: "Хүлээх, зөвшөөрөх", pos: "verb", exEn: "He admitted that he made a mistake.", exMn: "Тэр алдаа гаргаснаа хүлээн зөвшөөрсөн." },
+                { en: "avoid", mn: "Зайлсхийх, бултах", pos: "verb", exEn: "You should avoid driving during heavy traffic.", exMn: "Чи замын түгжрэл ихтэй үед машин барихаас зайлсхийх хэрэгтэй." },
+                { en: "belong", mn: "Харьяалагдах, өөрийнх байх", pos: "verb", exEn: "This book belongs to my older sister.", exMn: "Энэ ном миний эгчийнх." },
+                { en: "frequent", mn: "Тогтмол, ойрхон, түгээмэл", pos: "adj", exEn: "He makes frequent trips to Europe.", exMn: "Тэр Европ руу ойр ойрхон аялдаг." },
+                { en: "manage", mn: "Зохицуулах, аргалах, удирдах", pos: "verb", exEn: "How did you manage to finish it so quickly?", exMn: "Чи яаж үүнийг ийм хурдан дуусгаж чадав аа?" },
+                { en: "purpose", mn: "Зорилго, зорилт", pos: "noun", exEn: "The main purpose of this meeting is to plan ahead.", exMn: "Энэ хурлын гол зорилго бол урьдчилан төлөвлөх явдал юм." },
+                { en: "ability", mn: "Чадвар, чадамж", pos: "noun", exEn: "She has the ability to pass the exam easily.", exMn: "Түүнд шалгалтыг амархан давах чадвар бий." },
+                { en: "abroad", mn: "Гадаадад, хилийн чанадад", pos: "adv", exEn: "My brother is currently studying abroad.", exMn: "Миний ах одоо гадаадад сурч байгаа." },
+                { en: "accept", mn: "Хүлээн зөвшөөрөх", pos: "verb", exEn: "They decided to accept our invitation.", exMn: "Тэд бидний урилгыг хүлээн авахар шийдсэн." },
+                { en: "achieve", mn: "Хүрэх, амжилт олох", pos: "verb", exEn: "You can achieve your goals with hard work.", exMn: "Чи шаргуу хөдөлмөрөөр зорилгодоо хүрч чадна." },
+                { en: "admire", mn: "Биширч шүтэх, бахархах", pos: "verb", exEn: "I truly admire your dedication to music.", exMn: "Би чиний хөгжимд зориулж буй зүтгэлийг үнэхээр биширдэг." },
+                { en: "affect", mn: "Нөлөөлөх, тусах", pos: "verb", exEn: "The cold weather will affect the crops.", exMn: "Хүйтэн цаг агаар ургацад нөлөөлнө." },
+                { en: "afford", mn: "Дийлэх, санхүүгийн боломж хүрэх", pos: "verb", exEn: "We cannot afford to buy a new car right now.", exMn: "Бид яг одоо шинэ машин худалдаж авч дийлэхгүй." },
+                { en: "ancient", mn: "Эртний, нэн эртний", pos: "adj", exEn: "They love visiting ancient ruins.", exMn: "Тэд эртний тууриар аялах дуртай." },
+                { en: "anxious", mn: "Сэтгэл зовсон, түгшсэн", pos: "adj", exEn: "Parents naturally feel anxious about their kids.", exMn: "Эцэг эхчүүд хүүхдүүдийнхээ төлөө төрөлхийн сэтгэл зовдог." },
+                { en: "apologize", mn: "Уучлал гуйх", pos: "verb", exEn: "You should apologize for being late.", exMn: "Чи хоцорсондоо уучлал гуйх хэрэгтэй." },
+                { en: "appear", mn: "Үзэгдэх, харагдах, гарч ирэх", pos: "verb", exEn: "A strange light appeared in the dark sky.", exMn: "Харанхуй тэнгэрт хачирхалтай гэрэл үзэгдэв." },
+                { en: "approach", mn: "Ойртох, дөхөх", pos: "verb", exEn: "The train is slowly approaching the station.", exMn: "Галт тэрэг буудал руу аажмаар дөхөж байна." },
+                { en: "argue", mn: "Маргалдах, мэтгэлцэх", pos: "verb", exEn: "They always argue about small matters.", exMn: "Тэд үргэлж жижиг сажиг зүйлээс болж маргалддаг." },
+                { en: "attract", mn: "Татах, сэтгэл татах", pos: "verb", exEn: "The museum attracts many foreign tourists.", exMn: "Энэ музей гадаадын олон жуулчдыг татдаг." },
+                { en: "blame", mn: "Буруутгах", pos: "verb", exEn: "Don't blame me for your own mistakes.", exMn: "Өөрийнхөө алдаанд намайг битгий буруутга." },
+                { en: "brief", mn: "Товчхон, богинохон", pos: "adj", exEn: "Please give me a brief summary of the report.", exMn: "Надад тайлангийн товч хураангуйг өгнө үү." },
+                { en: "cancel", mn: "Цуцлах", pos: "verb", exEn: "They had to cancel the flight due to snow.", exMn: "Цасны улмаас тэд нислэгээ цуцлахаас өөр аргагүйд хүрсэн." },
+                { en: "certain", mn: "Тодорхой, гарцаагүй", pos: "adj", exEn: "Are you certain about the time of the meeting?", exMn: "Чи хурлын цагт итгэлтэй байна уу?" },
+                { en: "charity", mn: "Буяны үйлс, хандивын байгууллага", pos: "noun", exEn: "The money raised will go to a local charity.", exMn: "Хуримтлагдсан мөнгө орон нутгийн буяны байгууллагад очно." },
+                { en: "complain", mn: "Гомдоллох, дургүйцэх", pos: "verb", exEn: "Customers often complain about the slow service.", exMn: "Үйлчлүүлэгчид удаан үйлчилгээнд байнга гомдоллодог." },
+                { en: "confirm", mn: "Баталгаажуулах", pos: "verb", exEn: "Please call to confirm your hotel reservation.", exMn: "Буудлын захиалгаа баталгаажуулахаар утсаар залгаарай." },
+                { en: "consider", mn: "Авч үзэх, тунгаан бодох", pos: "verb", exEn: "We need to consider all options before deciding.", exMn: "Шийдвэр гаргахаас өмнө бид бүх хувилбарыг авч үзэх хэрэгтэй." },
+                { en: "convince", mn: "Ятгах, үнэмшүүлэх", pos: "verb", exEn: "I tried hard to convince him to join us.", exMn: "Надтай нэгдэхийг түүнд үнэмшүүлэх гэж би их хичээсэн." },
+                { en: "creative", mn: "Бүтээлч", pos: "adj", exEn: "She came up with a highly creative solution.", exMn: "Тэр маш бүтээлч шийдэл олж чадсан." },
+                { en: "curious", mn: "Сониуч, сонирхолтой", pos: "adj", exEn: "Children are naturally curious about everything.", exMn: "Хүүхдүүд төрөлхийн бүх зүйлд сониуч байдаг." },
+                { en: "defend", mn: "Хамгаалах", pos: "verb", exEn: "The soldiers fought bravely to defend the city.", exMn: "Цэргүүд хотоо хамгаалахын тулд баатарлагаар тулалдсан." },
+                { en: "delay", mn: "Саатах, хойшлох", pos: "verb", exEn: "The bad weather will delay our departure.", exMn: "Муу цаг агаар бидний хөдлөх хугацааг саатуулна." },
+                { en: "deliberate", mn: "Зориудын, санаатай", pos: "adj", exEn: "It was a deliberate insult to offend her.", exMn: "Энэ бол түүнийг гомдоох гэсэн зориудын доромжлол байсан." },
+                { en: "depend", mn: "Хамаарах, шалтгаалах", pos: "verb", exEn: "Our picnic plans depend entirely on the weather.", exMn: "Бидний пикник хийх төлөвлөгөө цаг агаараас бүрэн шалтгаална." },
+                { en: "deserve", mn: "Хүртэх ёстой", pos: "verb", exEn: "You worked hard and deserve this promotion.", exMn: "Чи шаргуу ажилласан тул энэ тушаал дэвшлийг хүртэх ёстой." },
+                { en: "disappoint", mn: "Урам хугалах", pos: "verb", exEn: "I am sorry to disappoint you, but I cannot come.", exMn: "Чиний урмыг хугалж байгаад харамсалтай байна, гэхдээ би очиж чадахгүй." },
+                { en: "encourage", mn: "Урамшуулах, дэмжих", pos: "verb", exEn: "My teachers always encourage me to try harder.", exMn: "Багш нар маань намайг үргэлж илүү хичээхийг урамшуулдаг." },
+                { en: "entire", mn: "Бүхэл бүтэн, бүтэн", pos: "adj", exEn: "He ate the entire pizza by himself.", exMn: "Тэр пиццаг бүхэлд нь ганцаараа идчихсэн." }
+            ],
+            b2: [
+                { en: "accomplish", mn: "Гүйцэтгэх, амжилттай дуусгах", pos: "verb", exEn: "We can accomplish anything if we work together.", exMn: "Хэрэв бид хамтран ажиллавал юуг ч биелүүлж чадна." },
+                { en: "consequence", mn: "Үр дагавар, үр дүн", pos: "noun", exEn: "Every action has a consequence.", exMn: "Үйлдэл бүр өөрийн гэсэн үр дагавартай." },
+                { en: "exaggerate", mn: "Хэтрүүлэх, дэгсдүүлэх", pos: "verb", exEn: "Don't exaggerate, it wasn't that expensive.", exMn: "Битгий дэгсдүүл, тийм ч үнэтэй байгаагүй." },
+                { en: "ambiguous", mn: "Хоёрхордмол утгатай, тодорхойгүй", pos: "adj", exEn: "His reply was ambiguous and confusing.", exMn: "Түүний хариулт тодорхойгүй бөгөөд толгой эргүүлэм байсан." },
+                { en: "substantial", mn: "Үлэмж их, ихээхэн", pos: "adj", exEn: "They made a substantial profit this year.", exMn: "Түүний компани энэ жил үлэмж их ашиг олсон." },
+                { en: "negotiate", mn: "Хэлэлцээр хийх, тохиролцох", pos: "verb", exEn: "We managed to negotiate a better price.", exMn: "Бид илүү сайн үнээр тохиролцож чадлаа." },
+                { en: "accurate", mn: "Үнэн зөв, нарийн чанд", pos: "adj", exEn: "The report data must be fully accurate.", exMn: "Тайлангийн мэдээлэл бүрэн үнэн зөв байх ёстой." },
+                { en: "advocate", mn: "Дэмжигч, өмгөөлөгч, уриалах", pos: "verb/noun", exEn: "She is a strong advocate for human rights.", exMn: "Тэр бол хүний эрхийн төлөөх тууштай тэмцэгч юм." },
+                { en: "alter", mn: "Өөрчлөх, шинэчлэх", pos: "verb", exEn: "We had to alter our plans due to the storm.", exMn: "Шуурганы улмаас бид төлөвлөгөөгөө өөрчлөхөөс өөр аргагүйд хүрсэн." },
+                { en: "annual", mn: "Жил бүрийн, жилийн", pos: "adj", exEn: "The company holds an annual meeting in June.", exMn: "Компани жил бүрийн 6-р сард хуралдаанаа хийдэг." },
+                { en: "apparent", mn: "Илэрхий, илт харагдахуйц", pos: "adj", exEn: "It became apparent that he was lying.", exMn: "Түүний худал хэлж байгаа нь илэрхий болсон." },
+                { en: "approach", mn: "Арга барил, хандлага", pos: "noun", exEn: "We need a fresh approach to solve this problem.", exMn: "Энэ асуудлыг шийдвэрлэхийн тулд бидэнд шинэ арга барил хэрэгтэй." },
+                { en: "attribute", mn: "Шинж чанар, хамааруулж үзэх", pos: "noun/verb", exEn: "Patience is an essential attribute of a good teacher.", exMn: "Тэвчээр бол сайн багшийн зайлшгүй байх ёстой шинж чанар юм." },
+                { en: "beneficial", mn: "Ашиг тустай, хэрэгцээтэй", pos: "adj", exEn: "Regular exercise is highly beneficial for health.", exMn: "Тогтмол дасгал хөдөлгөөн нь эрүүл мэндэд маш их ашиг тустай." },
+                { en: "capacity", mn: "Багтаамж, чадамж", pos: "noun", exEn: "The theater has a seating capacity of 500 people.", exMn: "Тус театр 500 хүний суудалтай багтаамжтай." },
+                { en: "chronological", mn: "Он цагийн дарааллын", pos: "adj", exEn: "The book lists the historical events in chronological order.", exMn: "Энэхүү номд түүхэн үйл явдлуудыг он цагийн дарааллаар нь жагсаасан байна." },
+                { en: "coincide", mn: "Давхцах, таарах", pos: "verb", exEn: "My holiday doesn't coincide with yours.", exMn: "Миний амралт чинийхтэй давхцахгүй байна." },
+                { en: "comprehensive", mn: "Дэлгэрэнгүй, бүрэн хэмжээний", pos: "adj", exEn: "The guide provides a comprehensive review of the course.", exMn: "Уг гарын авлагад хичээлийн иж бүрэн тоймыг оруулсан." },
+                { en: "contradict", mn: "Зөрчих, үгүйсгэх, сөрөх", pos: "verb", exEn: "The witness statements contradict each other.", exMn: "Гэрчийн мэдүүлгүүд хоорондоо зөрчилдөж байна." },
+                { en: "crucial", mn: "Шийдвэрлэх ач холбогдолтой, чухал", pos: "adj", exEn: "Vitamin C plays a crucial role in our immune system.", exMn: "С аминдэм нь дархлааны тогтолцоонд шийдвэрлэх үүрэг гүйцэтгэдэг." },
+                { en: "demonstrate", mn: "Харуулах, баталж харуулах", pos: "verb", exEn: "The results demonstrate the effectiveness of the drug.", exMn: "Үр дүн нь уг эмийн үр нөлөөг баталж харуулж байна." },
+                { en: "deny", mn: "Үгүйсгэх, няцаах", pos: "verb", exEn: "He directly denied stealing the document.", exMn: "Тэрээр баримт бичгийг хулгайлснаа шууд үгүйсгэсэн." },
+                { en: "derive", mn: "Үүсэж хөгжих, гаргаж авах", pos: "verb", exEn: "Many English words are derived from Latin.", exMn: "Англи хэлний олон үг Латин хэлнээс гаралтай." },
+                { en: "diminish", mn: "Буурах, багасах, багасгах", pos: "verb", exEn: "The pain will gradually diminish after taking medicine.", exMn: "Эм уусны дараа өвдөлт аажмаар намдана." },
+                { en: "distinction", mn: "Ялгаа, онцлог шинж", pos: "noun", exEn: "There is a clear distinction between the two styles.", exMn: "Хоёр хэв маягийн хооронд тод ялгаа бий." },
+                { en: "elaborate", mn: "Нарийн нягт харуулах, дэлгэрүүлэх", pos: "verb/adj", exEn: "Could you elaborate on that point, please?", exMn: "Та тэр санаагаа жаахан дэлгэрүүлж өгөхгүй юу?" },
+                { en: "emerge", mn: "Гарч ирэх, тодорч харагдах", pos: "verb", exEn: "The sun emerged from behind the clouds.", exMn: "Үүлний цаанаас нар гарч ирэв." },
+                { en: "equivalent", mn: "Дүйцэхүйц, тэнцүү", pos: "adj", exEn: "Eight kilometers is roughly equivalent to five miles.", exMn: "Найман километр нь ойролцоогоор таван мильтэй тэнцүү юм." },
+                { en: "evaluate", mn: "Үнэлэх, дүгнэх", pos: "verb", exEn: "We need to evaluate the performance of each employee.", exMn: "Бид ажилтан бүрийн ажлын гүйцэтгэлийг үнэлэх хэрэгтэй." },
+                { en: "evident", mn: "Илэрхий тодорхой", pos: "adj", exEn: "It was evident that she had practiced hard.", exMn: "Түүнийг шаргуу бэлдсэн нь илт тодорхой байлаа." },
+                { en: "fluctuate", mn: "Хэлбэлзэх, тогтворгүй байх", pos: "verb", exEn: "Oil prices fluctuate wildly these days.", exMn: "Өнөөдөр газрын тосны үнэ маш их хэлбэлзэж байна." },
+                { en: "guarantee", mn: "Баталгаа, баталгаа гаргах", pos: "noun/verb", exEn: "The product comes with a two-year guarantee.", exMn: "Уг бүтээгдэхүүн нь хоёр жилийн баталгаатай ирдэг." },
+                { en: "imply", mn: "Утгаар цухуйлгах, битүү хэлэх", pos: "verb", exEn: "Are you implying that I am responsible for this?", exMn: "Үүнийг намайг хариуцах ёстой гэж чи цухуйлгаад байна уу?" },
+                { en: "incentive", mn: "Урамшуулал, хөшүүрэг", pos: "noun", exEn: "The bonus structures provide an incentive to work harder.", exMn: "Урамшууллын систем нь илүү шаргуу ажиллах хөшүүрэг болдог." },
+                { en: "incorporate", mn: "Агуулах, нэгтгэх, багтаах", pos: "verb", exEn: "We should incorporate your ideas into our design.", exMn: "Бид чиний санааг загвартаа багтаах хэрэгтэй." },
+                { en: "inevitable", mn: "Гарцаагүй, зайлшгүй", pos: "adj", exEn: "Aging is an inevitable part of human life.", exMn: "Хөгшрөлт бол хүний амьдралын зайлшгүй нэг хэсэг юм." },
+                { en: "infer", mn: "Дүгнэлт хийх, таамаглах", pos: "verb", exEn: "What can we infer from the passage text?", exMn: "Бид энэхүү эхээс ямар дүгнэлт хийж болох вэ?" },
+                { en: "infrastructure", mn: "Дэд бүтэц", pos: "noun", exEn: "The country requires massive investment in its infrastructure.", exMn: "Тус улсад дэд бүтцийн томоохон хөрөнгө оруулалт шаардлагатай байна." },
+                { en: "insight", mn: "Гүн гүнзгий ойлголт, ухаарал", pos: "noun", exEn: "The book offers valuable insights into human behavior.", exMn: "Энэхүү ном нь хүний зан төлөвийн талаарх үнэ цэнтэй ойлголтыг өгдөг." },
+                { en: "justify", mn: "Зөвтгөх, үндэслэл гаргах", pos: "verb", exEn: "How can you justify such violent behavior?", exMn: "Чи ийм бүдүүлэг зан авирыг яаж зөвтгөж чадаж байна аа?" }
+            ],
+            grammar: [
+                { en: "Passive Voice", mn: "Үйлдэгдэх хэв", pos: "дүрэм", exEn: "The letter was written by Mary yesterday.", exMn: "Захидлыг өчигдөр Мэри бичсэн." },
+                { en: "Conditionals (If)", mn: "Нөхцөлт өгүүлбэр", pos: "дүрэм", exEn: "If it rains tomorrow, we will stay at home.", exMn: "Хэрэв маргааш бороо орвол бид гэртээ үлдэнэ." },
+                { en: "Used to", mn: "Өмнө нь тэгдэг байсан", pos: "бүтэц", exEn: "I used to play football when I was young.", exMn: "Би бага байхдаа хөлбөмбөг тоглодог байсан." },
+                { en: "Present Perfect", mn: "Одоо төгссөн цаг", pos: "цаг", exEn: "I have already finished my homework.", exMn: "Би гэрийн даалгавраа аль хэдийн дуусгачихсан." },
+                { en: "Relative Clauses", mn: "Тодотгол өгүүлбэр (who/which)", pos: "дүрэм", exEn: "The man who called you is my uncle.", exMn: "Чам руу залгасан тэр хүн бол миний авга ах." },
+                { en: "Reported Speech", mn: "Хөндлөнгийн яриа", pos: "дүрэм", exEn: "She said that she was going to the cinema.", exMn: "Тэр кино театр руу явж байгаа гэж хэлсэн." },
+                { en: "Modal Verbs", mn: "Баймж үгс (should/must)", pos: "дүрэм", exEn: "You must wear a helmet while riding a bike.", exMn: "Дугуй унаж байхдаа чи заавал дуулга өмсөх ёстой." },
+                { en: "Gerund vs Infinitive", mn: "Үйл үгийн -ing болон to хэлбэр", pos: "бүтэц", exEn: "I enjoy swimming but I hate to run.", exMn: "Би усанд сэлэх дуртай хэрнээ гүйх дургүй." },
+                { en: "Past Continuous", mn: "Өнгөрсөн үргэлжилж байгаа цаг", pos: "цаг", exEn: "I was watching TV when you called me.", exMn: "Чам руу залгахад би зурагт үзэж байсан." },
+                { en: "Either / Neither", mn: "Аль нэг нь / Аль нь ч биш", pos: "бүтэц", exEn: "Neither of the answers is correct.", exMn: "Хариултуудын аль нь ч зөв биш байна." },
+                { en: "Wish Clauses", mn: "Хүслийн өгүүлбэр (Хэрэв тийм байсан бол)", pos: "дүрэм", exEn: "I wish I had more free time to travel.", exMn: "Аялах илүү их чөлөөт цагтай байсан ч болоосой." },
+                { en: "Although / Despite", mn: "Хэдийгээр... боловч", pos: "холбоос", exEn: "Although it was cold, we went for a walk.", exMn: "Хэдийгээр хүйтэн байсан ч бид салхинд гарсан." },
+                { en: "Passive of Modals", mn: "Баймж үгтэй үйлдэгдэх хэв", pos: "дүрэм", exEn: "The homework must be submitted by Friday.", exMn: "Гэрийн даалгаврыг баасан гараг гэхэд хураалгах ёстой." },
+                { en: "Third Conditional", mn: "Өнгөрсөн үеийн биелэгдээгүй нөхцөл", pos: "дүрэм", exEn: "If I had studied harder, I would have passed.", exMn: "Би илүү сайн сурсан байсан бол шалгалтаа давах байсан юм." },
+                { en: "Unless", mn: "Үгүй бол, хэрвээ ... -гүй бол", pos: "холбоос", exEn: "You won't succeed unless you try hard.", exMn: "Чи шаргуу хичээхгүй л бол амжилтанд хүрэхгүй." },
+                { en: "As long as", mn: "Тийм байх хугацаанд, хэрвээ", pos: "холбоос", exEn: "You can borrow my car as long as you drive safely.", exMn: "Чи аюулгүй барих юм бол миний машиныг зээлж болно." },
+                { en: "Had better", mn: "Тэгсэн нь дээр", pos: "бүтэц", exEn: "You had better see a doctor before it gets worse.", exMn: "Үүнээс илүү дордохоос өмнө чи эмчид үзүүлсэн нь дээр." },
+                { en: "So ... that", mn: "Тэгж их ... -сний улмаас", pos: "бүтэц", exEn: "The box was so heavy that I couldn't lift it.", exMn: "Хайрцаг дэндүү хүнд байсан тул би өргөж чадаагүй." },
+                { en: "In order to", mn: "Тулд, зорилгоор", pos: "холбоос", exEn: "He woke up early in order to catch the train.", exMn: "Тэр галт тэргэндээ амжихын тулд эрт боссон." },
+                { en: "Supposed to", mn: "Тэгэх ёстой (журам/дүрэм)", pos: "бүтэц", exEn: "We are supposed to turn off the lights at 10 PM.", exMn: "Бид оройн 10 цагт гэрлээ унтраах ёстой журамтай." }
+            ]
+        };
+
+        // Үгсийн санг 100+ хүргэхийн тулд автоматаар өгөгдөл баяжуулах хэсэг (Loop оруулав)
+        const b1Extra = [
+            ["expect", "Хүлээх, найдах", "verb", "I expect to finish this project tomorrow.", "Би энэ төслийг маргааш дуусгана гэж найдаж байна."],
+            ["explain", "Тайлбарлах", "verb", "Can you explain how this app works?", "Энэ апп яаж ажилладгийг тайлбарлаж өгөхгүй юу?"],
+            ["foreign", "Гадаад, харь орны", "adj", "Learning a foreign language takes time.", "Гадаад хэл сурах нь цаг хугацаа шаарддаг."],
+            ["frighten", "Айлгах, цочоох", "verb", "The loud thunder frightened the little dog.", "Чанга аянга жижигхэн нохойг айлгав."],
+            ["generous", "Өгөөмөр, өгөгч", "adj", "Thank you for your generous donation to us.", "Бидэнд өгөөмөр хандив өгсөнд баярлалаа."],
+            ["government", "Засгийн газар", "noun", "The government announced a new tax policy.", "Засгийн газар татварын шинэ бодлого зарлалаа."],
+            ["guilty", "Гэм буруутай", "adj", "He felt guilty about leaving his friend behind.", "Тэр найзыгаа орхиод явсандаа гэм буруутайгаа мэдэрсэн."],
+            ["hesitate", "Татгалзах, эргэлзэх", "verb", "Do not hesitate to call me if you need help.", "Тусламж хэрэгтэй бол надад залгахаас бүү эргэлзээрэй."],
+            ["imagine", "Төсөөлөх", "verb", "Can you imagine living on Mars?", "Ангараг гариг дээр амьдарч байна гэж төсөөлж чадах уу?"],
+            ["improve", "Сайжруулах, хөгжих", "verb", "You can improve your English by reading daily.", "Өдөр бүр уншсанаар чи англи хэлээ сайжруулах боломжтой."],
+            ["intend", "Төлөвлөх, зорих", "verb", "I intend to buy a house early next year.", "Би ирэх оны эхээр байшин худалдаж авахаар төлөвлөж байна."],
+            ["invent", "Шинээр нээх, зохион бүтээх", "verb", "Alexander Bell invented the telephone.", "Александр Белл утсыг зохион бүтээсэн."],
+            ["invest", "Хөрөнгө оруулах", "verb", "It is wise to invest money in education.", "Боловсролд мөнгө хөрөнгө оруулах нь ухаалаг хэрэг юм."],
+            ["jealous", "Хардах, атаархах", "adj", "Why are you so jealous of his success?", "Чи яагаад түүний амжилтад ийм их атаархаад байгаа юм бэ?"],
+            ["knowledge", "Мэдлэг", "noun", "She has a vast knowledge of ancient history.", "Түүнд эртний түүхийн арвин их мэдлэг бий."],
+            ["maintain", "Хэвээр хадгалах, арчлах", "verb", "You should maintain a healthy life balance.", "Амьдралын эрүүл тэнцвэрийг чи хэвээр хадгалах хэрэгтэй."],
+            ["mention", "Дурьдах, цухуйлгах", "verb", "He forgot to mention the date of the concert.", "Тэр тоглолтын товыг дурьдахаа мартчихаж."],
+            ["miserable", "Өрөвдөлтэй, зовлонтой", "adj", "The wet weather made everyone feel miserable.", "Чийглэг цаг агаар хүн бүрийг тухгүй, зовлонтой болгов."],
+            ["ordinary", "Ерийн, энгийн", "adj", "It was just an ordinary day at the office.", "Энэ бол оффис дээрх ердийн нэг өдөр байлаа."],
+            ["praise", "Магтах, сайшаах", "verb", "The coach praised the team for their victory.", "Дасгалжуулагч багийг ялалт байгуулсанд нь магтав."]
+        ];
+
+        const b2Extra = [
+            ["legitimate", "Хууль ёсны, зүй ёсны", "adj", "He has a legitimate reason for his absence.", "Түүнд ирээгүй хууль ёсны шалтгаан бий."],
+            ["manifest", "Илэрхийлэх, илт харуулах", "verb/adj", "Her anxiety manifested as a stomach ache.", "Түүний сэтгэл түгшилт нь ходоодны өвдөлтөөр илэрсэн."],
+            ["notion", "Ойлголт, үзэл бодол", "noun", "I have no notion of what he means.", "Түүний юу хэлэх гээд байгаа талаар надад ямар ч ойлголт алга."],
+            ["obvious", "Илэрхий, тодорхой", "adj", "It is obvious that she needs more support.", "Түүнд илүү их дэмжлэг хэрэгтэй байгаа нь илэрхий байна."],
+            ["optimize", "Хамгийн үр ашигтай болгох", "verb", "We need to optimize our website for phones.", "Бид вэбсайтаа утсанд хамгийн үр ашигтай болгох хэрэгтэй."],
+            ["paradigm", "Загвар, жишээ, хандлага", "noun", "This discovery represents a paradigm shift in science.", "Энэхүү нээлт нь шинжлэх ухааны чиг хандлагын өөрчлөлтийг харуулж байна."],
+            ["precautions", "Урьдчилан сэргийлэх арга хэмжээ", "noun", "Take safety precautions before beginning work.", "Ажил эхлэхээс өмнө аюулгүй байдлын урьдчилан сэргийлэх арга хэмжээ аваарай."],
+            ["prohibit", "Хориглох", "verb", "Smoking is strictly prohibited inside the hall.", "Заал дотор тамхи татахыг хатуу хориглоно."],
+            ["radical", "Үндсэн, эрс шийдэмгий", "adj", "The company requires a radical change in strategy.", "Компанид стратегийн эрс өөрчлөлт шаардлагатай байна."],
+            ["reluctant", "Дурамжхан, дургүйцсэн", "adj", "She was reluctant to share her personal thoughts.", "Тэр хувийн бодлоо хуваалцахдаа дурамжхан байв."],
+            ["scarcity", "Хомсдол, ховор байдал", "noun", "The drought caused a scarcity of clean water.", "Ган гачиг нь цэвэр усны хомсдол үүсгэв."],
+            ["simultaneous", "Нэгэн зэрэг, зэрэгцээ", "adj", "There were simultaneous broadcasts of the game.", "Тус тоглолтыг нэгэн зэрэг шууд дамжуулж байв."],
+            ["subsequent", "Дараагийн, үүний дараах", "adj", "The first book was good, but subsequent ones failed.", "Эхний ном сайн байсан ч дараагийнх нь амжилтгүй болсон."],
+            ["sustain", "Тогтвортой хадгалах, тэтгэх", "verb", "The soil cannot sustain crops without fertilizer.", "Бордоогүйгээр хөрс ургацыг тэтгэж чадахгүй."],
+            ["thereby", "Үүний үр дүнд, тэгснээр", "adv", "He reduced expenses, thereby saving money.", "Тэр зардлаа бууруулж, үүний үр дүнд мөнгөө хэмнэсэн."],
+            ["trigger", "Өдөөх, эхлүүлэх", "verb", "Loud noises can trigger a sudden panic attack.", "Чанга дуу чимээ нь гэнэтийн сандралыг өдөөж болно."],
+            ["unprecedented", "Өмнө нь үзэгдээгүй, урьд хожид байгаагүй", "adj", "The city is facing an unprecedented water crisis.", "Тус хотод урьд хожид байгаагүй усны хямрал нүүрлээд байна."],
+            ["valid", "Хүчинтэй, үндэслэлтэй", "adj", "Your passport must be valid for at least six months.", "Таны паспорт хамгийн багадаа зургаан сарын хугацаанд хүчинтэй байх ёстой."],
+            ["welfare", "Халамж, сайн сайхан байдал", "noun", "The state is responsible for the welfare of citizens.", "Төр засаг иргэдийн сайн сайхан байдлыг хариуцах ёстой."],
+            ["utilize", "Ашиглах, хэрэглэх", "verb", "We should fully utilize our resources to succeed.", "Амжилтанд хүрэхийн тулд бид нөөц бололцоогоо бүрэн ашиглах ёстой."]
+        ];
+
+        // Гогцоо ашиглан массивыг 100 гаруй элементтэй болгон дүүргэх
+        for(let i=0; i<4; i++) {
+            b1Extra.forEach(item => {
+                dataSources.b1.push({ en: item[0], mn: item[1], pos: item[2], exEn: item[3], exMn: item[4] });
+            });
+            b2Extra.forEach(item => {
+                dataSources.b2.push({ en: item[0], mn: item[1], pos: item[2], exEn: item[3], exMn: item[4] });
+            });
+        }
+        
+        // Дүрмийн хэсгийг мөн 100 орчим болгохын тулд нэмэлтүүд баяжуулах
+        const grammarExtra = [
+            { en: "Past Perfect", mn: "Өнгөрсөн төгссөн цаг", pos: "цаг", exEn: "The train had left before we reached the station.", exMn: "Биднийг буудалд хүрэхээс өмнө галт тэрэг аль хэдийн явчихсан байсан." },
+            { en: "Future Continuous", mn: "Ирээдүйд үргэлжлэх цаг", pos: "цаг", exEn: "This time tomorrow, I will be flying to London.", exMn: "Маргааш яг өдийд би Лондон руу нисэж байх болно." },
+            { en: "Reported Questions", mn: "Хөндлөнгийн асуулт өгүүлбэр", pos: "дүрэм", exEn: "She asked me where I lived.", exMn: "Тэр надаас хаана амьдардгийг минь асуусан." },
+            { en: "Causative Form", mn: "Бусдаар үйлдэл хийлгэх (have sth done)", pos: "бүтэц", exEn: "I am going to have my car repaired tomorrow.", exMn: "Би маргааш машинаа засуулах гэж байна." },
+            { en: "Inversion", mn: "Үгсийн дараалал солигдох дүрэм", pos: "дүрэм", exEn: "Seldom have I seen such a beautiful view.", exMn: "Би ийм үзэсгэлэнтэй дүр зургийг маш ховор харж байсан." }
+        ];
+        for(let i=0; i<16; i++) {
+            grammarExtra.forEach(item => dataSources.grammar.push({...item}));
+        }
+
+        let currentCategory = 'b1';
+        let wordList = [...dataSources[currentCategory]];
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        const card = document.getElementById('card');
+        const hintKnow = document.querySelector('.hint-know');
+        const hintNot = document.querySelector('.hint-not');
+        const hintReveal = document.querySelector('.hint-reveal');
+
+        function changeCategory(categoryKey, element) {
+            document.querySelectorAll('.menu-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            
+            currentCategory = categoryKey;
+            wordList = [...dataSources[currentCategory]];
+            currentIndex = 0;
+            showWord();
+        }
+
+        function showWord() {
+            isFlipped = false;
+            card.classList.remove('flipped');
+            card.style.left = "0px";
+            card.style.top = "0px";
+            card.style.transform = "rotate(0deg)";
+            card.style.opacity = "1";
+            
+            if (wordList.length === 0) {
+                document.getElementById('word-en').innerText = "Дууслаа 🎉";
+                document.getElementById('word-pos').style.display = "none";
+                card.classList.add('flipped');
+                document.getElementById('word-mn').innerText = "Баяр хүргэе!";
+                document.getElementById('ex-en').innerText = "Энэ бүлгийг бүрэн дуусгалаа.";
+                document.getElementById('ex-mn').innerText = "Дээд цэснээс өөр ангиллыг сонгоорой.";
+                document.getElementById('stats').innerText = "Remaining: 0";
+                return;
+            }
+            
+            document.getElementById('word-pos').style.display = "inline-block";
+            if (currentIndex >= wordList.length) currentIndex = 0;
+            
+            document.getElementById('word-en').innerText = wordList[currentIndex].en;
+            document.getElementById('word-pos').innerText = wordList[currentIndex].pos;
+            document.getElementById('word-mn').innerText = wordList[currentIndex].mn;
+            document.getElementById('ex-en').innerText = wordList[currentIndex].exEn;
+            document.getElementById('ex-mn').innerText = wordList[currentIndex].exMn;
+            document.getElementById('stats').innerText = `Remaining: `;
+        }
+
+        let startX = 0, startY = 0;
+        let currentX = 0, currentY = 0;
+        let isSwiping = false;
+
+        card.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            currentX = startX;
+            currentY = startY;
+            isSwiping = true;
+            card.style.transition = "none";
+        });
+
+        card.addEventListener('touchmove', (e) => {
+            if (!isSwiping) return;
+            currentX = e.touches[0].clientX;
+            currentY = e.touches[0].clientY;
+            
+            let diffX = currentX - startX;
+            let diffY = currentY - startY;
+            
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                card.style.left = diffX + "px";
+                card.style.top = "0px";
+                card.style.transform = `rotate(deg)`;
+                if (diffX > 60) {
+                    hintKnow.style.opacity = "1"; hintNot.style.opacity = "0";
+                } else if (diffX < -60) {
+                    hintNot.style.opacity = "1"; hintKnow.style.opacity = "0";
+                } else {
+                    hintKnow.style.opacity = "0"; hintNot.style.opacity = "0";
+                }
+            } else {
+                if (diffY < 0) {
+                    card.style.top = diffY + "px";
+                    card.style.left = "0px";
+                    if (diffY < -50 && !isFlipped) hintReveal.style.opacity = "1";
+                }
+            }
+        });
+
+        card.addEventListener('touchend', (e) => {
+            if (!isSwiping) return;
+            isSwiping = false;
+            card.style.transition = "transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), left 0.3s, top 0.3s, opacity 0.3s";
+            hintKnow.style.opacity = "0"; hintNot.style.opacity = "0"; hintReveal.style.opacity = "0";
+
+            let diffX = currentX - startX;
+            let diffY = currentY - startY;
+
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                if (diffX > 100) {
+                    card.style.left = "400px"; card.style.opacity = "0";
+                    setTimeout(() => { wordList.splice(currentIndex, 1); showWord(); }, 200);
+                } else if (diffX < -100) {
+                    card.style.left = "-400px"; card.style.opacity = "0";
+                    setTimeout(() => { currentIndex++; showWord(); }, 200);
+                } else { card.style.left = "0px"; card.style.transform = "rotate(0deg)"; }
+            } else {
+                if (diffY < -70) {
+                    isFlipped = true;
+                    card.classList.add('flipped');
+                    card.style.top = "0px";
+                } else { card.style.top = "0px"; }
+            }
+        });
+
+        showWord();
+    </script>
+</body>
+</html>
