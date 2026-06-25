@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlowVocab Premium Audio & Image</title>
+    <style>
+:root {
+        --bg-color: #e8ede8;
+        --surface-color: #ffffff;
+        --text-main: #1a2a1a;
+        --text-sub: #5a6e5a;
+        --primary: #27ae60;
+        --primary-light: #e8f8ee;
+        --border-color: #d0e8d8;
+        --default-shadow: 0 15px 35px rgba(39, 174, 96, 0.08), 0 5px 15px rgba(0, 0, 0, 0.02);
+    }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            height: 100dvh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Дээд талын прогресс тууз */
+        .top-progress-container {
+            width: 100%;
+            height: 5px;
+            background: #4b6352;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+        .top-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+.menu-container{
+           padding:20px 16px 12px;
+           background:var(--surface-color);
+       
+           display:grid;
+           grid-template-columns:1fr 1fr 1fr 1fr;
+       
+           gap:6px;
+       
+           overflow:hidden;
+       
+           border-bottom:1px solid var(--border-color);
+       }
+       
+       .menu-btn{
+           width:100%;
+           min-width:0;
+       
+           padding:8px 4px;
+       
+           font-size:11px;
+           font-weight:700;
+       
+           white-space:normal;
+       
+           background:#f7fcf8;
+           color:#4b6352;
+       
+           border:1px solid #d8ebde;
+           border-radius:12px;
+       
+           box-shadow:0 2px 6px rgba(39,174,96,.06);
+    
+        white-space:nowrap;
+    
+        padding:8px 12px;
+    
+        font-size:12px;
+    
+        min-width:auto;
+    
+        width:auto
+}
+
+.menu-btn.active{
+    background:#27ae60;
+    color:white;
+    border-color:#27ae60;
+}    
+        .info-bar {
+            padding: 14px 24px 0 24px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .progress-text {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-sub);
+            background: #e5edf7;
+            padding: 4px 12px;
+            border-radius: 10px;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 24px 24px 24px;
+        }
+
+        .desc {
+            color: var(--text-sub);
+            font-size: 13px;
+            text-align: center;
+            line-height: 1.6;
+            max-width: 310px;
+            font-weight: 600;
+        }
+
+.card-container{
+            width:100%;
+            max-width:330px;
+            height:min(68vh,380px);
+            position:relative;
+            perspective:1000px;
+            margin:auto 0;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            box-shadow: var(--default-shadow);
+            border-radius: 28px;
+            cursor: pointer;
+            border: 1px solid rgba(39, 174, 96, 0.45);
+            background-color: var(--surface-color);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-sizing: border-box;
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), left 0.2s, top 0.2s, opacity 0.2s, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+
+        /* Одны систем (⭐) */
+        .star-icon {
+            position: absolute;
+            top: 20px;
+            right: 24px;
+            font-size: 22px;
+            color: #d1d5db;
+            cursor: pointer;
+            transition: color 0.2s, transform 0.1s;
+            z-index: 5;
+        }
+        .star-icon.active {
+            color: #fbbf24;
+            /* Алтан шар өнгө */
+            transform: scale(1.15);
+        }
+
+        .card .front-content, .card .back-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 8px;
+        }
+        .card .back-content {
+            display: none;
+        }
+        .card.flipped .front-content {
+            display: none;
+        }
+        .card.flipped .back-content {
+            display: flex;
+        }
+
+.word{
+            font-size:42px;
+            font-weight:800;
+            letter-spacing:-1px;
+            margin-bottom:10px;
+            color:var(--text-main);
+        }
+        .word-underline {
+            width: 40px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 2px;
+            opacity: 0.4;
+            margin: 0 auto 16px auto;
+        }
+
+
+        .tag {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--primary);
+            background: var(--primary-light);
+            padding: 4px 10px;
+            border-radius: 7px;
+            margin-bottom: 20px;
+        }
+
+        .front-example-box {
+            width: 100%;
+            background: transparent;
+            padding: 10px 4px 0 4px;
+            border-radius: 0;
+            text-align: left;
+            margin-top: auto;
+        }
+        .ex-en {
+            font-style: normal;
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 1.7;
+            padding: 10px 14px;
+            background: #eaf4ee;
+            border-radius: 12px;
+            display: block;
+        }
+
+        /* Арын талд Англи үг */
+        .back-en-word {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--primary);
+            opacity: 0.5;
+            letter-spacing: 0.3px;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        /* Арын орчуулгын дизайн */
+        .translation {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text-main);
+            line-height: 1.4;
+            margin-bottom: 16px;
+        }
+
+        /* ШИНЭ: Эсрэг болон ижил утгатай үгнүүд */
+        .word-relations {
+            width: 100%;
+            display: flex;
+            gap: 10px;
+            margin-top: auto;
+        }
+        .relation-box {
+            flex: 1;
+            border-radius: 14px;
+            padding: 10px 12px;
+            text-align: center;
+        }
+.ex-en,
+        .relation-box.collocation{
+            background:#f5fbf7;
+            border-left:4px solid var(--primary);
+            border-radius:16px;
+            padding:12px 16px;
+        }
+        .relation-label {
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            color: var(--primary);
+        }
+        .relation-word {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .grammar-note {
+            font-size: 12px;
+            color: var(--text-sub);
+            background: #f0f4fa;
+            border-left: 3px solid var(--primary);
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-top: 10px;
+            text-align: left;
+            line-height: 1.6;
+            font-weight: 600;
+            display: none;
+        }
+        .grammar-note.visible {
+            display: block;
+        }
+        .grammar-back-detail {
+            display: none;
+            width: 100%;
+            flex: 1;
+    background:#f8fcf9;
+            
+                border:1px solid #d7ebdd;
+            
+                border-radius:20px;
+            
+                box-shadow:
+            
+                    0 8px 24px rgba(39,174,96,.08);
+            padding: 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+            line-height: 1.9;
+            text-align: left;
+            white-space: pre-line;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .grammar-back-detail.visible {
+            display: block;
+        }
+        .grammar-front-detail {
+            display: none;
+            width: 100%;
+            background: #f0f4fa;
+            border-radius: 14px;
+            padding: 12px 14px;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--text-main);
+            line-height: 1.8;
+            text-align: left;
+            margin-top: 10px;
+            white-space: pre-line;
+            overflow-y: auto;
+            max-height: 200px;
+        }
+        .grammar-front-detail.visible { display: block; }
+
+        /* Тэмдэглэсэн tab одны дизайн */
+        #starred-tab {
+            font-size: 18px;
+            padding: 11px 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-progress-container">
+        <div class="top-progress-bar" id="progress-fill"></div>
+    </div>
+
+    <div class="menu-container">
+        <button class="menu-btn active" onclick="changeCategory('b1', this)">B1</button>
+        <button class="menu-btn" onclick="changeCategory('b2', this)">B2</button>
+        <button class="menu-btn" onclick="changeCategory('grammar', this)">English Grammar</button>
+        <button class="menu-btn" id="starred-tab" onclick="changeCategory('starred', this)">★</button>
+    </div>
+
+
+    <div class="main-content">
+        <div class="desc" style="visibility:hidden; height:0; margin:0; padding:0;"></div>
+
+        <div class="card-container">
+            <div class="card" id="card">
+                <!-- Тэмдэглэх од -->
+                <div class="star-icon" id="star-btn" onclick="toggleStar(event)">
+                    ★
+                </div>
+
+                <div class="front-content">
+                    <div class="word" id="word-en" onclick="speakCurrentWord(event)">
+                        Loading...
+                    </div>
+                    <div class="tag" id="word-pos">
+                        WORD
+                    </div>
+                    <div class="front-example-box">
+                        <div class="ex-en" id="ex-en">
+                            Example loading...
+                        </div>
+                        <div class="grammar-note" id="grammar-note"></div>
+                    </div>
+                    <!-- Grammar: нүүрэн талд дэлгэрэнгүй тайлбар -->
+                    <div class="grammar-front-detail" id="grammar-front-detail"></div>
+                </div>
+                <div class="back-content">
+                    <div class="back-en-word" id="back-en-word"></div>
+                    <div class="translation" id="word-mn">
+                        Уншиж байна...
+                    </div>
+                    <!-- Vocab: collocation only -->
+                    <div class="word-relations" id="word-relations">
+                        <div class="relation-box collocation" style="width:100%; text-align:left;">
+                            <div class="relation-label">Usage</div>
+                            <div class="relation-word" id="word-col">—</div>
+                        </div>
+                    </div>
+                    <!-- Grammar: дэлгэрэнгүй тайлбар -->
+                    <div class="grammar-back-detail" id="grammar-back-detail"></div>
+                </div>
+            </div>
+        </div>
+        <div></div>
+    </div>
+
+    <script>
+        const dataSources = {
+            b1: [{
+                en: "agree",
+                mn: "Санал нэгдэх, зөвшөөрөх",
+                pos: "verb",
+                exEn: "I agree with your opinion on this matter.",
+                syn: "consent",
+                col: "agree with, agree on, fully agree"
+            },
+            {
+                en: "admit",
+                mn: "Хүлээх, зөвшөөрөх",
+                pos: "verb",
+                exEn: "He admitted that he made a mistake.",
+                syn: "acknowledge",
+                col: "admit a mistake, admit guilt, freely admit"
+            },
+            {
+                en: "avoid",
+                mn: "Зайлсхийх, бултах",
+                pos: "verb",
+                exEn: "You should avoid driving during heavy traffic.",
+                syn: "evade",
+                col: "avoid mistakes, avoid eye contact, avoid traffic"
+            },
+            {
+                en: "belong",
+                mn: "Харьяалагдах, өөрийнх байх",
+                pos: "verb",
+                exEn: "This book belongs to my older sister.",
+                syn: "own",
+                col: "belong to, belong together, feel you belong"
+            },
+            {
+                en: "frequent",
+                mn: "Тогтмол, ойрхон, түгээмэл",
+                pos: "adj",
+                exEn: "He makes frequent trips to Europe.",
+                syn: "regular",
+                col: "frequent visits, frequent traveler, frequent use"
+            },
+            {
+                en: "manage",
+                mn: "Зохицуулах, аргалах, удирдах",
+                pos: "verb",
+                exEn: "How did you manage to finish it so quickly?",
+                syn: "handle",
+                col: "manage a team, manage time, manage to do"
+            },
+            {
+                en: "purpose",
+                mn: "Зорилго, зорилт",
+                pos: "noun",
+                exEn: "The main purpose of this meeting is to plan ahead.",
+                syn: "goal",
+                col: "main purpose, serve a purpose, on purpose"
+            },
+            {
+                en: "ability",
+                mn: "Чадвар, чадамж",
+                pos: "noun",
+                exEn: "She has the ability to pass the exam easily.",
+                syn: "skill",
+                col: "natural ability, ability to learn, mixed ability"
+            },
+            {
+                en: "abroad",
+                mn: "Гадаадад, хилийн чанадад",
+                pos: "adv",
+                exEn: "My brother is currently studying abroad.",
+                syn: "overseas",
+                col: "study abroad, live abroad, travel abroad"
+            },
+            {
+                en: "accept",
+                mn: "Хүлээн зөвшөөрөх",
+                pos: "verb",
+                exEn: "They decided to accept our invitation.",
+                syn: "receive",
+                col: "accept an offer, accept responsibility, widely accepted"
+            },
+                {
+                    en: "advantage",
+                    mn: "Давуу тал",
+                    pos: "noun",
+                    exEn: "Experience is a big advantage.",
+                    syn: "benefit",
+                    col: "take advantage of, competitive advantage, clear advantage"
+                },
+                {
+                    en: "afford",
+                    mn: "Хүрэлцэх, дийлэх",
+                    pos: "verb",
+                    exEn: "I can't afford a new car.",
+                    syn: "manage",
+                    col: "can't afford, afford to buy, afford the time"
+                },
+                {
+                    en: "amuse",
+                    mn: "Зугаацуулах",
+                    pos: "verb",
+                    exEn: "The story amused the children.",
+                    syn: "entertain",
+                    col: "amuse yourself, amuse the crowd, amuse children"
+                },
+                {
+                    en: "anxious",
+                    mn: "Түгшсэн",
+                    pos: "adj",
+                    exEn: "He was anxious about the test.",
+                    syn: "worried",
+                    col: "feel anxious, anxious about, anxious moment"
+                },
+                {
+                    en: "appoint",
+                    mn: "Томилох",
+                    pos: "verb",
+                    exEn: "They appointed a new leader.",
+                    syn: "assign",
+                    col: "appoint a leader, appoint to a role, newly appointed"
+                },
+                {
+                    en: "approach",
+                    mn: "Дөхөж очих",
+                    pos: "verb",
+                    exEn: "Winter is approaching fast.",
+                    syn: "near",
+                    col: "approach a problem, different approach, take an approach"
+                },
+                {
+                    en: "argue",
+                    mn: "Маргах",
+                    pos: "verb",
+                    exEn: "Don't argue with your parents.",
+                    syn: "dispute",
+                    col: "argue about, argue with, argue strongly"
+                },
+                {
+                    en: "arrange",
+                    mn: "Зохион байгуулах",
+                    pos: "verb",
+                    exEn: "We arranged a meeting.",
+                    syn: "organize",
+                    col: "arrange a meeting, arrange carefully, arrange in order"
+                },
+                {
+                    en: "arrest",
+                    mn: "Баривчлах",
+                    pos: "verb",
+                    exEn: "The police arrested the thief.",
+                    syn: "capture",
+                    col: "arrest someone, under arrest, arrest a suspect"
+                },
+                {
+                    en: "arrive",
+                    mn: "Ирэх",
+                    pos: "verb",
+                    exEn: "What time will you arrive?",
+                    syn: "reach",
+                    col: "arrive on time, arrive at, arrive safely"
+                },
+                {
+                    en: "ashamed",
+                    mn: "Ичих",
+                    pos: "adj",
+                    exEn: "He felt ashamed of his actions.",
+                    syn: "embarrassed",
+                    col: "feel ashamed, deeply ashamed, ashamed of yourself"
+                },
+                {
+                    en: "assist",
+                    mn: "Туслах",
+                    pos: "verb",
+                    exEn: "Can I assist you?",
+                    syn: "help",
+                    col: "assist with, assist in doing, provide assistance"
+                },
+                {
+                    en: "attach",
+                    mn: "Хавсаргах",
+                    pos: "verb",
+                    exEn: "Attach the file to the email.",
+                    syn: "connect",
+                    col: "attach a file, attach importance to, become attached"
+                },
+                {
+                    en: "attract",
+                    mn: "Татах",
+                    pos: "verb",
+                    exEn: "The event attracted many people.",
+                    syn: "lure",
+                    col: "attract attention, attract customers, attract interest"
+                },
+                {
+                    en: "available",
+                    mn: "Боломжтой",
+                    pos: "adj",
+                    exEn: "Is this room available?",
+                    syn: "accessible",
+                    col: "freely available, available online, make available"
+                },
+                {
+                    en: "average",
+                    mn: "Дундаж",
+                    pos: "adj",
+                    exEn: "The average age is twenty.",
+                    syn: "standard",
+                    col: "on average, above average, average cost"
+                },
+                {
+                    en: "aware",
+                    mn: "Мэдээтэй",
+                    pos: "adj",
+                    exEn: "Are you aware of the risks?",
+                    syn: "conscious",
+                    col: "be aware of, become aware, fully aware"
+                },
+                {
+                    en: "ban",
+                    mn: "Хориглох",
+                    pos: "verb",
+                    exEn: "They banned smoking here.",
+                    syn: "prohibit",
+                    col: "ban completely, ban from, impose a ban"
+                },
+                {
+                    en: "barely",
+                    mn: "Бараг л үгүй",
+                    pos: "adv",
+                    exEn: "I could barely hear him.",
+                    syn: "hardly",
+                    col: "barely enough, barely manage, barely noticeable"
+                },
+                {
+                    en: "behavior",
+                    mn: "Зан төлөв",
+                    pos: "noun",
+                    exEn: "His behavior is very polite.",
+                    syn: "conduct",
+                    col: "good behavior, model behavior, change behavior"
+                },
+                {
+                    en: "benefit",
+                    mn: "Үр ашиг",
+                    pos: "noun",
+                    exEn: "This has many benefits.",
+                    syn: "advantage",
+                    col: "benefit from, financial benefit, health benefit"
+                },
+                {
+                    en: "blame",
+                    mn: "Буруутгах",
+                    pos: "verb",
+                    exEn: "Don't blame me for this.",
+                    syn: "accuse",
+                    col: "blame someone for, take the blame, blame yourself"
+                },
+                {
+                    en: "brief",
+                    mn: "Товч",
+                    pos: "adj",
+                    exEn: "Keep your speech brief.",
+                    syn: "short",
+                    col: "brief summary, in brief, brief meeting"
+                },
+                {
+                    en: "brilliant",
+                    mn: "Гялалзсан",
+                    pos: "adj",
+                    exEn: "That is a brilliant idea.",
+                    syn: "smart",
+                    col: "absolutely brilliant, brilliant idea, brilliant student"
+                },
+                {
+                    en: "broad",
+                    mn: "Өргөн",
+                    pos: "adj",
+                    exEn: "He has a broad smile.",
+                    syn: "wide",
+                    col: "broad knowledge, broad range, broadly speaking"
+                },
+                {
+                    en: "capture",
+                    mn: "Барих",
+                    pos: "verb",
+                    exEn: "The photo captures the moment.",
+                    syn: "seize",
+                    col: "capture attention, capture on camera, capture the moment"
+                },
+                {
+                    en: "certain",
+                    mn: "Тодорхой",
+                    pos: "adj",
+                    exEn: "I am certain about this.",
+                    syn: "sure",
+                    col: "feel certain, certain about, absolutely certain"
+                },
+                {
+                    en: "challenge",
+                    mn: "Сорилт",
+                    pos: "noun",
+                    exEn: "This is a great challenge.",
+                    syn: "test",
+                    col: "face a challenge, accept a challenge, challenging task"
+                },
+                {
+                    en: "character",
+                    mn: "Зан чанар",
+                    pos: "noun",
+                    exEn: "He has a strong character.",
+                    syn: "nature",
+                    col: "main character, strong character, character trait"
+                },
+                {
+                    en: "claim",
+                    mn: "Шаардах",
+                    pos: "verb",
+                    exEn: "They claim it is true.",
+                    syn: "allege",
+                    col: "claim responsibility, make a claim, strongly claim"
+                },
+                {
+                    en: "colleague",
+                    mn: "Хамтран ажиллагч",
+                    pos: "noun",
+                    exEn: "He is my colleague at work.",
+                    syn: "coworker",
+                    col: "work colleague, senior colleague, close colleague"
+                },
+                {
+                    en: "comment",
+                    mn: "Сэтгэгдэл",
+                    pos: "noun",
+                    exEn: "Leave a comment below.",
+                    syn: "remark",
+                    col: "make a comment, public comment, comment on"
+                },
+                {
+                    en: "common",
+                    mn: "Нийтлэг",
+                    pos: "adj",
+                    exEn: "It is a common mistake.",
+                    syn: "shared",
+                    col: "common mistake, common sense, in common"
+                },
+                {
+                    en: "compare",
+                    mn: "Харьцуулах",
+                    pos: "verb",
+                    exEn: "Compare the two items.",
+                    syn: "contrast",
+                    col: "compare with, compare prices, compare results"
+                },
+                {
+                    en: "compete",
+                    mn: "Өрсөлдөх",
+                    pos: "verb",
+                    exEn: "They compete for the prize.",
+                    syn: "contend",
+                    col: "compete against, compete for, fierce competition"
+                },
+                {
+                    en: "compliment",
+                    mn: "Магтаал",
+                    pos: "noun",
+                    exEn: "Take it as a compliment.",
+                    syn: "praise",
+                    col: "pay a compliment, genuine compliment, receive a compliment"
+                },
+                {
+                    en: "confirm",
+                    mn: "Батлах",
+                    pos: "verb",
+                    exEn: "Please confirm your email.",
+                    syn: "verify",
+                    col: "confirm a booking, confirm details, confirm in writing"
+                },
+                {
+                    en: "connect",
+                    mn: "Холбох",
+                    pos: "verb",
+                    exEn: "Connect the laptop to power.",
+                    syn: "link",
+                    col: "connect with, connect to the internet, strongly connected"
+                },
+                {
+                    en: "contact",
+                    mn: "Холбоо барих",
+                    pos: "verb",
+                    exEn: "Contact me later.",
+                    syn: "reach",
+                    col: "make contact, contact information, lose contact"
+                },
+                {
+                    en: "contain",
+                    mn: "Агуулах",
+                    pos: "verb",
+                    exEn: "This box contains sugar.",
+                    syn: "include",
+                    col: "contain information, contain sugar, difficult to contain"
+                },
+                {
+                    en: "content",
+                    mn: "Агуулга",
+                    pos: "noun",
+                    exEn: "Check the content of the book.",
+                    syn: "substance",
+                    col: "online content, content with life, create content"
+                },
+                {
+                    en: "contest",
+                    mn: "Уралдаан",
+                    pos: "noun",
+                    exEn: "He won the writing contest.",
+                    syn: "competition",
+                    col: "win a contest, enter a contest, close contest"
+                },
+                {
+                    en: "continue",
+                    mn: "Үргэлжлүүлэх",
+                    pos: "verb",
+                    exEn: "Continue your work.",
+                    syn: "proceed",
+                    col: "continue doing, continue to grow, continue as planned"
+                },
+                {
+                    en: "control",
+                    mn: "Хянах",
+                    pos: "verb",
+                    exEn: "Control your emotions.",
+                    syn: "manage",
+                    col: "take control, control emotions, lose control"
+                },
+                {
+                    en: "correct",
+                    mn: "Зөв",
+                    pos: "adj",
+                    exEn: "That is the correct answer.",
+                    syn: "right",
+                    col: "correct an error, absolutely correct, correct behavior"
+                },
+                {
+                    en: "cost",
+                    mn: "Өртөг",
+                    pos: "noun",
+                    exEn: "What is the cost?",
+                    syn: "price",
+                    col: "cost of living, at no cost, high cost"
+                },
+                {
+                    en: "courage",
+                    mn: "Зориг",
+                    pos: "noun",
+                    exEn: "He has great courage.",
+                    syn: "bravery",
+                    col: "show courage, great courage, courage to speak"
+                },
+                {
+                    en: "create",
+                    mn: "Үүсгэх",
+                    pos: "verb",
+                    exEn: "Create a new document.",
+                    syn: "make",
+                    col: "create opportunities, create problems, create content"
+                },
+                {
+                    en: "crucial",
+                    mn: "Шийдвэрлэх",
+                    pos: "adj",
+                    exEn: "It is a crucial moment.",
+                    syn: "vital",
+                    col: "crucial moment, crucial role, absolutely crucial"
+                },
+                {
+                    en: "current",
+                    mn: "Одоогийн",
+                    pos: "adj",
+                    exEn: "What is the current status?",
+                    syn: "present",
+                    col: "current situation, current events, keep current"
+                },
+
+            ],
+            b2: [{
+                en: "accomplish",
+                mn: "Гүйцэтгэх, амжилттай дуусгах",
+                pos: "verb",
+                exEn: "We can accomplish anything if we work together.",
+                syn: "achieve",
+                col: "accomplish a goal, accomplish tasks, great accomplishment"
+            },
+                {
+                    en: "consequence",
+                    mn: "Үр дагавар, үр дүн",
+                    pos: "noun",
+                    exEn: "Every action has a consequence.",
+                    syn: "result",
+                    col: "serious consequence, face consequences, as a consequence"
+                },
+                {
+                    en: "exaggerate",
+                    mn: "Хэтрүүлэх, дэгсдүүлэх",
+                    pos: "verb",
+                    exEn: "Don't exaggerate, it wasn't that expensive.",
+                    syn: "overstate",
+                    col: "slightly exaggerate, tend to exaggerate, don't exaggerate"
+                },
+                {
+                    en: "acquire",
+                    mn: "Олж авах",
+                    pos: "verb",
+                    exEn: "She acquired new skills at work.",
+                    syn: "obtain",
+                    col: "acquire skills, acquire knowledge, newly acquired"
+                },
+                {
+                    en: "altogether",
+                    mn: "Бүхэлд нь",
+                    pos: "adv",
+                    exEn: "It is altogether different.",
+                    syn: "entirely",
+                    col: "not altogether sure, altogether different, stop altogether"
+                },
+                {
+                    en: "analyze",
+                    mn: "Шинжлэх",
+                    pos: "verb",
+                    exEn: "We need to analyze the data.",
+                    syn: "examine",
+                    col: "analyze data, carefully analyze, analyze results"
+                },
+                {
+                    en: "appropriate",
+                    mn: "Зохимжтой",
+                    pos: "adj",
+                    exEn: "That is an appropriate response.",
+                    syn: "suitable",
+                    col: "appropriate behavior, appropriate time, perfectly appropriate"
+                },
+                {
+                    en: "artificial",
+                    mn: "Хиймэл",
+                    pos: "adj",
+                    exEn: "It is made of artificial light.",
+                    syn: "synthetic",
+                    col: "artificial intelligence, artificial flavor, artificial light"
+                },
+                {
+                    en: "aspect",
+                    mn: "Тал, өнцөг",
+                    pos: "noun",
+                    exEn: "Consider every aspect of the plan.",
+                    syn: "feature",
+                    col: "key aspect, every aspect, consider all aspects"
+                },
+                {
+                    en: "assemble",
+                    mn: "Цуглуулах",
+                    pos: "verb",
+                    exEn: "Assemble the parts carefully.",
+                    syn: "gather",
+                    col: "assemble a team, assemble parts, assemble quickly"
+                },
+                {
+                    en: "assert",
+                    mn: "Батлах",
+                    pos: "verb",
+                    exEn: "He asserted that he was right.",
+                    syn: "claim",
+                    col: "assert yourself, assert a claim, confidently assert"
+                },
+                {
+                    en: "assess",
+                    mn: "Үнэлэх",
+                    pos: "verb",
+                    exEn: "Assess the situation first.",
+                    syn: "evaluate",
+                    col: "assess the situation, assess risk, carefully assess"
+                },
+                {
+                    en: "assume",
+                    mn: "Таамаглах",
+                    pos: "verb",
+                    exEn: "Don't assume anything.",
+                    syn: "presume",
+                    col: "assume responsibility, assume it's true, safe to assume"
+                },
+                {
+                    en: "astonish",
+                    mn: "Гайхшруулах",
+                    pos: "verb",
+                    exEn: "Her success astonished everyone.",
+                    syn: "amaze",
+                    col: "completely astonish, astonish everyone, astonishing result"
+                },
+                {
+                    en: "attain",
+                    mn: "Хүрэх",
+                    pos: "verb",
+                    exEn: "She attained her goal.",
+                    syn: "achieve",
+                    col: "attain a goal, attain success, hard to attain"
+                },
+                {
+                    en: "awkward",
+                    mn: "Эвгүй",
+                    pos: "adj",
+                    exEn: "It was an awkward situation.",
+                    syn: "clumsy",
+                    col: "feel awkward, awkward silence, awkward situation"
+                },
+                {
+                    en: "boundary",
+                    mn: "Хил хязгаар",
+                    pos: "noun",
+                    exEn: "Respect personal boundaries.",
+                    syn: "limit",
+                    col: "set a boundary, cross a boundary, clear boundary"
+                },
+                {
+                    en: "burden",
+                    mn: "Ачаа дарамт",
+                    pos: "noun",
+                    exEn: "It is a heavy burden.",
+                    syn: "load",
+                    col: "heavy burden, carry a burden, reduce the burden"
+                },
+                {
+                    en: "calculate",
+                    mn: "Тооцоолох",
+                    pos: "verb",
+                    exEn: "Calculate the total cost.",
+                    syn: "compute",
+                    col: "calculate the cost, carefully calculate, calculate risk"
+                },
+                {
+                    en: "capable",
+                    mn: "Чадвартай",
+                    pos: "adj",
+                    exEn: "She is capable of doing it.",
+                    syn: "able",
+                    col: "highly capable, capable of doing, prove capable"
+                },
+                {
+                    en: "cease",
+                    mn: "Зогсоох",
+                    pos: "verb",
+                    exEn: "The rain has ceased.",
+                    syn: "stop",
+                    col: "cease to exist, cease operations, cease immediately"
+                },
+                {
+                    en: "clarify",
+                    mn: "Тодруулах",
+                    pos: "verb",
+                    exEn: "Please clarify your point.",
+                    syn: "explain",
+                    col: "clarify a point, please clarify, clarify the situation"
+                },
+                {
+                    en: "classify",
+                    mn: "Ангилах",
+                    pos: "verb",
+                    exEn: "Classify these into groups.",
+                    syn: "categorize",
+                    col: "classify as, properly classify, classify information"
+                },
+                {
+                    en: "combine",
+                    mn: "Хослуулах",
+                    pos: "verb",
+                    exEn: "Combine the ingredients.",
+                    syn: "merge",
+                    col: "combine with, combine skills, combine efforts"
+                },
+                {
+                    en: "commit",
+                    mn: "Үйлдэх",
+                    pos: "verb",
+                    exEn: "He committed a crime.",
+                    syn: "perpetrate",
+                    col: "commit to doing, commit a crime, fully committed"
+                },
+                {
+                    en: "complex",
+                    mn: "Цогцолбор",
+                    pos: "adj",
+                    exEn: "The problem is complex.",
+                    syn: "complicated",
+                    col: "highly complex, complex situation, complex problem"
+                },
+                {
+                    en: "conceal",
+                    mn: "Нуух",
+                    pos: "verb",
+                    exEn: "She tried to conceal the truth.",
+                    syn: "hide",
+                    col: "conceal the truth, attempt to conceal, conceal emotions"
+                },
+                {
+                    en: "concentrate",
+                    mn: "Төвлөрөх",
+                    pos: "verb",
+                    exEn: "I can't concentrate today.",
+                    syn: "focus",
+                    col: "concentrate on, hard to concentrate, concentrate fully"
+                },
+                {
+                    en: "conclude",
+                    mn: "Дүгнэх",
+                    pos: "verb",
+                    exEn: "We concluded the deal.",
+                    syn: "finish",
+                    col: "conclude that, conclude a meeting, safely conclude"
+                },
+                {
+                    en: "conflict",
+                    mn: "Зөрчил",
+                    pos: "noun",
+                    exEn: "There is a conflict of ideas.",
+                    syn: "clash",
+                    col: "resolve a conflict, armed conflict, internal conflict"
+                },
+                {
+                    en: "confuse",
+                    mn: "Төөрөлдөх",
+                    pos: "verb",
+                    exEn: "Don't confuse me.",
+                    syn: "bewilder",
+                    col: "confuse someone, easily confused, confuse with"
+                },
+                {
+                    en: "consider",
+                    mn: "Авч үзэх",
+                    pos: "verb",
+                    exEn: "Consider the options carefully.",
+                    syn: "think",
+                    col: "consider options, carefully consider, consider yourself"
+                },
+                {
+                    en: "consist",
+                    mn: "Бүрдэх",
+                    pos: "verb",
+                    exEn: "It consists of three parts.",
+                    syn: "comprise",
+                    col: "consist of, mainly consist, consist entirely"
+                },
+                {
+                    en: "constant",
+                    mn: "Тогтмол",
+                    pos: "adj",
+                    exEn: "There is constant noise.",
+                    syn: "steady",
+                    col: "constant change, constant pressure, remain constant"
+                },
+                {
+                    en: "construct",
+                    mn: "Бүтээн байгуулах",
+                    pos: "verb",
+                    exEn: "They construct new roads.",
+                    syn: "build",
+                    col: "construct a building, carefully construct, construct an argument"
+                },
+                {
+                    en: "consume",
+                    mn: "Хэрэглэх",
+                    pos: "verb",
+                    exEn: "This car consumes much fuel.",
+                    syn: "use",
+                    col: "consume energy, consume food, consume time"
+                },
+                {
+                    en: "contradict",
+                    mn: "Эсрэгцэх",
+                    pos: "verb",
+                    exEn: "Don't contradict yourself.",
+                    syn: "oppose",
+                    col: "contradict yourself, directly contradict, contradict the evidence"
+                },
+                {
+                    en: "contribute",
+                    mn: "Хувь нэмэр оруулах",
+                    pos: "verb",
+                    exEn: "He contributed to the project.",
+                    syn: "donate",
+                    col: "contribute to, make a contribution, contribute actively"
+                },
+                {
+                    en: "convenient",
+                    mn: "Тохиромжтой",
+                    pos: "adj",
+                    exEn: "It is very convenient.",
+                    syn: "handy",
+                    col: "highly convenient, convenient location, convenient time"
+                },
+                {
+                    en: "convert",
+                    mn: "Хөрвүүлэх",
+                    pos: "verb",
+                    exEn: "Convert files to PDF.",
+                    syn: "transform",
+                    col: "convert to, convert energy, successfully convert"
+                },
+                {
+                    en: "convince",
+                    mn: "Ятгах",
+                    pos: "verb",
+                    exEn: "I convinced him to join.",
+                    syn: "persuade",
+                    col: "convince someone, hard to convince, convince yourself"
+                },
+                {
+                    en: "cooperate",
+                    mn: "Хамтран ажиллах",
+                    pos: "verb",
+                    exEn: "We should cooperate.",
+                    syn: "collaborate",
+                    col: "cooperate with, fully cooperate, cooperate closely"
+                },
+                {
+                    en: "criticize",
+                    mn: "Шүүмжлэх",
+                    pos: "verb",
+                    exEn: "Don't criticize others.",
+                    syn: "judge",
+                    col: "strongly criticize, criticize fairly, criticize publicly"
+                },
+                {
+                    en: "crude",
+                    mn: "Бүдүүлэг",
+                    pos: "adj",
+                    exEn: "That is a crude joke.",
+                    syn: "rough",
+                    col: "crude oil, rather crude, crude method"
+                },
+                {
+                    en: "cruel",
+                    mn: "Харгис",
+                    pos: "adj",
+                    exEn: "Don't be cruel to animals.",
+                    syn: "mean",
+                    col: "incredibly cruel, cruel treatment, cruel behavior"
+                },
+                {
+                    en: "damage",
+                    mn: "Гэмтэл",
+                    pos: "noun",
+                    exEn: "The damage is severe.",
+                    syn: "harm",
+                    col: "cause damage, serious damage, damage control"
+                },
+                {
+                    en: "daring",
+                    mn: "Зоригтой",
+                    pos: "adj",
+                    exEn: "It was a daring move.",
+                    syn: "bold",
+                    col: "daring move, daring approach, incredibly daring"
+                },
+                {
+                    en: "debate",
+                    mn: "Мэтгэлцээн",
+                    pos: "noun",
+                    exEn: "The debate was interesting.",
+                    syn: "discussion",
+                    col: "open debate, debate the issue, ongoing debate"
+                },
+                {
+                    en: "decay",
+                    mn: "Ялзрах",
+                    pos: "verb",
+                    exEn: "The leaves will decay.",
+                    syn: "rot",
+                    col: "rapid decay, decay over time, prevent decay"
+                },
+                {
+                    en: "deceive",
+                    mn: "Мэхлэх",
+                    pos: "verb",
+                    exEn: "He deceived the public.",
+                    syn: "trick",
+                    col: "deceive someone, deliberately deceive, feel deceived"
+                },
+                {
+                    en: "decide",
+                    mn: "Шийдэх",
+                    pos: "verb",
+                    exEn: "Decide what to do.",
+                    syn: "choose",
+                    col: "decide to do, decide between, finally decide"
+                },
+
+            ],
+            grammar: [{
+                en: "Passive Voice",
+                mn: "Үйлдэгдэх хэв",
+                pos: "дүрэм",
+                exEn: "The letter was written by Mary yesterday.",
+                backDetail: "Бүтэц\nSubject + be (am/is/are/was/were) + Past Participle (V3)\n\nХэзээ хэрэглэх\nҮйлдэгч нь тодорхойгүй эсвэл чухал биш үед хэрэглэнэ. Шинжлэх ухаан, мэдээ, албан бичигт их тохиолддог.\n\nЖишээ\nActive:  Tom wrote the letter.\nPassive: The letter was written by Tom.\n\nActive:  They build houses here.\nPassive: Houses are built here."
+            },
+            {
+                en: "Conditionals (If)",
+                mn: "Нөхцөлт өгүүлбэр",
+                pos: "дүрэм",
+                exEn: "If it rains tomorrow, we will stay at home.",
+                backDetail: "Нөхцөлт өгүүлбэрийн 3 төрөл\n\nZero — үргэлжийн үнэн\nIf + present, present\nIf you heat ice, it melts.\n\nType 1 — бодит боломж\nIf + present, will + V1\nIf it rains, I will take an umbrella.\n\nType 2 — хийсвэр эсвэл боломжгүй\nIf + past, would + V1\nIf I were rich, I would travel the world."
+            },
+            {
+                en: "Present Perfect",
+                mn: "Өнөөгийн төгс цаг",
+                pos: "дүрэм",
+                exEn: "I have lived here for five years.",
+                backDetail: "Бүтэц\nSubject + have/has + Past Participle (V3)\n\nХэзээ хэрэглэх\nӨнгөрсөнд эхэлж, одоог хүртэл үргэлжилсэн үйлдэл.\nАмьдралдаа хэзээ нэгэн цагт хийсэн туршлага.\nСая дөнгөж болсон зүйл.\n\nЖишээ\nI have visited Japan twice.\nShe has just finished her homework.\nWe have known each other since 2010.\n\nfor = хугацааны урт   since = эхэлсэн цэг"
+            },
+            {
+                en: "Past Simple vs Past Continuous",
+                mn: "Өнгөрсөн цаг хоёр хэлбэр",
+                pos: "дүрэм",
+                exEn: "I was reading when he called.",
+                backDetail: "Past Simple — дууссан үйлдэл\nSubject + V2\nShe arrived at 8 o'clock.\n\nPast Continuous — тухайн үед үргэлжилж байсан\nSubject + was/were + V-ing\nShe was sleeping when I called.\n\nХамт хэрэглэх үед\nI was cooking when the phone rang.\n— rang = гэнэт болсон (Past Simple)\n— was cooking = тэр үед явагдаж байсан (Past Continuous)"
+            },
+            {
+                en: "Reported Speech",
+                mn: "Шууд бус яриа",
+                pos: "дүрэм",
+                exEn: "She said that she was tired.",
+                backDetail: "Шууд яриа → Шууд бус яриа руу хувиргах\n\nЦаг хөдлөх дүрэм\nis → was\nwill → would\ncan → could\nhave → had\n\nЖишээ\n\"I am happy.\" → He said he was happy.\n\"I will call you.\" → She said she would call me.\n\"I can swim.\" → He said he could swim.\n\nАсуулт болгох үед\n\"Where do you live?\" → She asked where I lived."
+            },
+            {
+                en: "Articles: a, an, the",
+                mn: "Тодорхой ба тодорхойгүй нийлүүлэгч",
+                pos: "дүрэм",
+                exEn: "I saw a dog. The dog was friendly.",
+                backDetail: "a / an — тодорхойгүй, анх дурдаж байгаа\na + гийгүүлэгчээр эхэлсэн үг:  a cat, a book\nan + эгшгээр эхэлсэн үг:  an apple, an hour\n\nthe — тодорхой, аль хэдийн мэдэж байгаа\nI have a cat. The cat is black.\n\nАртикль хэрэглэхгүй тохиолдол\nЕрөнхий нэр:  Dogs are friendly.\nГазрын нэр ихэнхдээ:  I live in Mongolia."
+            },
+            {
+                en: "Modal Verbs",
+                mn: "Туслах үйл үг",
+                pos: "дүрэм",
+                exEn: "You should see a doctor.",
+                backDetail: "can — чадах, боломжтой\nI can swim. Can I help you?\n\ncould — өнгөрсөнд чадах, эелдэг хүсэлт\nShe could speak French as a child.\nCould you open the window?\n\nmust — заавал, хатуу үүрэг\nYou must wear a seatbelt.\n\nshould — зөвлөмж, зохимжтой\nYou should drink more water.\n\nmay / might — магадлал, зөвшөөрөл\nIt might rain today.\nMay I come in?"
+            },
+            {
+                en: "Relative Clauses",
+                mn: "Харьцааны өгүүлбэр",
+                pos: "дүрэм",
+                exEn: "The man who lives next door is a doctor.",
+                backDetail: "who — хүнийг тодотгоход\nThe woman who called is my teacher.\n\nwhich — юмыг тодотгоход\nThe book which I bought is interesting.\n\nthat — хүн эсвэл юм (ярианы хэлэнд түгээмэл)\nThe film that we watched was great.\n\nwhose — өмчлөлийг илэрхийлэхэд\nThe student whose essay won is in my class.\n\nwhere — газрыг тодотгоход\nThe city where I was born is small."
+            },
+            {
+                en: "Future Tenses",
+                mn: "Ирээдүйн цаг",
+                pos: "дүрэм",
+                exEn: "I will call you later.",
+                backDetail: "will + V1 — шийдвэр, амлалт, таамаглал\nI will help you move. It will be cold tomorrow.\n\nbe going to + V1 — урьдчилан төлөвлөсөн\nWe are going to visit Paris next summer.\n\nPresent Continuous — товлосон цаг хугацаатай\nI am meeting her at 6 PM.\n\nPresent Simple — хуваарийн дагуу\nThe train leaves at 8:00 tomorrow morning."
+            },
+            {
+                en: "Comparatives & Superlatives",
+                mn: "Харьцуулах зэрэг",
+                pos: "дүрэм",
+                exEn: "She is taller than her brother.",
+                backDetail: "Харьцуулах зэрэг — хоёр зүйл харьцуулах\nБогино үг + er:  tall → taller, fast → faster\nmore + урт үг:  more beautiful, more expensive\nТусгай хэлбэр:  good → better,  bad → worse\n\nДээд зэрэг — бүгдээс ялгарах\nБогино үг + est:  tall → the tallest\nmost + урт үг:  the most important\nТусгай хэлбэр:  good → the best,  bad → the worst\n\nЖишээ\nHe is smarter than his classmate.\nShe is the most talented student in class."
+            }]
+        };
+
+        let currentCategory = 'b1';
+        let wordList = [...dataSources[currentCategory]];
+        let initialCount = wordList.length;
+        let currentIndex = 0;
+        let isFlipped = false;
+        let starredWords = []; // Тэмдэглэсэн үгсийн жагсаалт
+
+        const card = document.getElementById('card');
+        const starBtn = document.getElementById('star-btn');
+
+        function changeCategory(categoryKey, element) {
+            document.querySelectorAll('.menu-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            currentCategory = categoryKey;
+            if (categoryKey === 'starred') {
+                wordList = [...starredWords];
+            } else {
+                wordList = [...dataSources[currentCategory]];
+            }
+            initialCount = wordList.length;
+            currentIndex = 0;
+            showWord();
+        }
+
+        function updateProgress() {
+            if (initialCount === 0) return;
+            let viewed = initialCount - wordList.length;
+            let percentage = (viewed / initialCount) * 100;
+            document.getElementById('progress-fill').style.width = percentage + "%";
+        }
+
+        function speakCurrentWord(event) {
+            if (event) event.stopPropagation();
+            if (wordList.length === 0 || isFlipped) return;
+            const text = wordList[currentIndex].en;
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.85;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function toggleStar(event) {
+            event.stopPropagation();
+            const word = wordList[currentIndex];
+            if (!word) return;
+            const alreadyStarred = starredWords.some(w => w.en === word.en);
+            if (alreadyStarred) {
+                starredWords = starredWords.filter(w => w.en !== word.en);
+                starBtn.classList.remove('active');
+            } else {
+                starredWords.push(word);
+                starBtn.classList.add('active');
+            }
+        }
+
+        function showWord() {
+            isFlipped = false;
+            card.classList.remove('flipped');
+            card.style.left = "0px";
+            card.style.top = "0px";
+            card.style.transform = "rotate(0deg)";
+            card.style.opacity = "1";
+            card.style.borderColor = "rgba(39, 174, 96, 0.45)";
+
+            if (wordList.length === 0) {
+                document.getElementById('word-en').innerText = "Дууслаа";
+                document.getElementById('word-pos').style.display = "none";
+                starBtn.style.display = "none";
+                card.classList.add('flipped');
+                document.getElementById('word-mn').innerText = "Бүх үгийг үзэж дууслаа.";
+                updateProgress();
+                return;
+            }
+
+            document.getElementById('word-pos').style.display = "inline-block";
+            starBtn.style.display = "block";
+            if (currentIndex >= wordList.length) currentIndex = 0;
+
+            // Одны төлөвийг сэргээх
+            const isStarred = starredWords.some(w => w.en === wordList[currentIndex].en);
+            isStarred ? starBtn.classList.add('active'): starBtn.classList.remove('active');
+
+            document.getElementById('word-en').innerText = wordList[currentIndex].en;
+            document.getElementById('back-en-word').innerText = wordList[currentIndex].en;
+            document.getElementById('word-pos').innerText = wordList[currentIndex].pos;
+            document.getElementById('ex-en').innerText = wordList[currentIndex].exEn;
+            document.getElementById('word-mn').innerText = wordList[currentIndex].mn;
+
+            // Grammar нүүрэн тал: зөвхөн жишээ өгүүлбэр (frontDetail хэрэггүй)
+            const frontDetailEl = document.getElementById('grammar-front-detail');
+            frontDetailEl.classList.remove('visible');
+            frontDetailEl.innerText = '';
+
+            const isGrammar = (currentCategory === 'grammar');
+            const relEl = document.getElementById('word-relations');
+            const backDetailEl = document.getElementById('grammar-back-detail');
+
+            if (isGrammar) {
+                // Grammar арын талд: орчуулга, нэр харуулахгүй — зөвхөн тайлбар
+                relEl.style.display = 'none';
+                document.getElementById('back-en-word').style.display = 'none';
+                document.getElementById('word-mn').style.display = 'none';
+                backDetailEl.innerText = wordList[currentIndex].backDetail || '';
+                backDetailEl.classList.add('visible');
+            } else {
+                relEl.style.display = 'flex';
+                document.getElementById('back-en-word').style.display = 'block';
+                document.getElementById('word-mn').style.display = 'block';
+                backDetailEl.classList.remove('visible');
+                backDetailEl.innerText = '';
+                document.getElementById('word-col').innerText = wordList[currentIndex].col || "—";
+            }
+
+            updateProgress();
+        }
+
+        let startX = 0, startY = 0;
+        let currentX = 0, currentY = 0;
+        let isSwiping = false;
+
+        const grammarDetail = document.getElementById('grammar-back-detail');
+
+        // Grammar тайлбар дотор touch хийхэд картын swipe блоклох
+        grammarDetail.addEventListener('touchstart', (e) => { e.stopPropagation(); }, { passive: true });
+        grammarDetail.addEventListener('touchmove', (e) => { e.stopPropagation(); }, { passive: true });
+        grammarDetail.addEventListener('touchend', (e) => { e.stopPropagation(); });
+
+        card.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            currentX = startX;
+            currentY = startY;
+            isSwiping = true;
+            card.style.transition = "none";
+        });
+
+        card.addEventListener('touchmove', (e) => {
+            if (!isSwiping) return;
+            currentX = e.touches[0].clientX;
+            currentY = e.touches[0].clientY;
+
+            let diffX = currentX - startX;
+            let diffY = currentY - startY;
+
+            card.style.left = diffX + "px";
+            card.style.top = diffY + "px";
+            card.style.transform = `rotate(${diffX * 0.08}deg)`;
+
+            if (diffX > 20) {
+                card.style.boxShadow = "0 25px 40px rgba(76, 175, 80, 0.25), 0 5px 15px rgba(0, 0, 0, 0.02)";
+                card.style.borderColor = "rgba(76, 175, 80, 0.3)";
+            } else if (diffX < -20) {
+                card.style.boxShadow = "0 25px 40px rgba(244, 67, 54, 0.22), 0 5px 15px rgba(0, 0, 0, 0.02)";
+                card.style.borderColor = "rgba(244, 67, 54, 0.25)";
+            } else {
+                card.style.boxShadow = "var(--default-shadow)";
+                card.style.borderColor = "rgba(39, 174, 96, 0.45)";
+            }
+        });
+
+        card.addEventListener('touchend', (e) => {
+            if (!isSwiping) return;
+            isSwiping = false;
+
+            card.style.transition = "transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15), left 0.2s, top 0.2s, opacity 0.2s, box-shadow 0.2s, border-color 0.2s";
+
+            let diffX = currentX - startX;
+            let diffY = currentY - startY;
+
+            if (Math.abs(diffX) > 80 && Math.abs(diffX) > Math.abs(diffY) * 0.6) {
+                if (diffX > 80) {
+                    card.style.left = "400px"; card.style.opacity = "0";
+                    setTimeout(() => {
+                        wordList.splice(currentIndex, 1); showWord();
+                    }, 120);
+                } else if (diffX < -80) {
+                    card.style.left = "-400px"; card.style.opacity = "0";
+                    setTimeout(() => {
+                        currentIndex++; showWord();
+                    }, 120);
+                }
+            } else {
+                if (diffY < -50 && Math.abs(diffY) > Math.abs(diffX)) {
+                    isFlipped = !isFlipped;
+                    if (isFlipped) card.classList.add('flipped');
+                    else card.classList.remove('flipped');
+                }
+                card.style.left = "0px";
+                card.style.top = "0px";
+                card.style.transform = "rotate(0deg)";
+                card.style.boxShadow = "var(--default-shadow)";
+                card.style.borderColor = "rgba(39, 174, 96, 0.45)";
+            }
+        });
+
+        showWord();
+    </script>
+</body>
+</html>
